@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>キャリアプラン プレゼンテーション</title>
+    <!-- Google Fonts: 高い可読性と洗練された美しさを両立 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* ==========================================
+           1. 全体のセットアップ & スライダーレイアウト
+           ========================================== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 背景をご指定の「米白（暖かみのあるウォームオフホワイト）」 */
+        body {
+            background-color: #faf8f5; 
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            font-family: 'Noto Sans JP', sans-serif;
+            color: #1e293b;
+        }
+
+        /* プレゼンテーション全体のラッパー（拡大縮小・センタリング用） */
+        .presentation-viewport {
+            position: relative;
+            width: 1280px;
+            height: 720px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            overflow: hidden;
+            background-color: #ffffff;
+            transition: transform 0.2s ease-out;
+            transform-origin: center;
+            border: 1px solid #f1f5f9;
+        }
+
+        /* 16:9 スライド基本コンテナ */
+        .slide-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            display: none; /* 初期状態は非表示 */
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
+            padding: 60px 100px;
+            overflow: hidden;
+        }
+
+        /* アクティブなスライドの表示とシンプルなフェードトランジション */
+        .slide-container.active {
+            display: flex;
+            animation: slideFadeIn 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+        }
+
+        @keyframes slideFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.98);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* オレンジ・橙赤をベースにした洗練された装飾ライン */
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 12px;
+            height: 100%;
+            background: linear-gradient(180deg, #ff6b00 0%, #ff3c00 100%);
+            z-index: 2;
+        }
+
+        .slide-container::after {
+            content: '';
+            position: absolute;
+            bottom: 35px;
+            left: 100px;
+            width: 1080px;
+            height: 1px;
+            background-color: #f1f5f9;
+            z-index: 1;
+        }
+
+        .slide-container > * {
+            position: relative;
+            z-index: 3;
+        }
+
+        /* ==========================================
+           2. タイポグラフィ（視認性向上、文字サイズ調整）
+           ========================================== */
+        h1, h2, h3, h4 {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-weight: 700;
+        }
+
+        /* ページタイトルの統一（左側オレンジ縦ライン） */
+        .slide-container .slide-title {
+            color: #1e293b;
+            font-size: 34px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            text-align: left;
+            width: 100%;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .slide-container .slide-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 30px;
+            background: linear-gradient(180deg, #ff6b00, #ff3c00);
+            border-radius: 3px;
+        }
+
+        /* 本文とリストの文字サイズ */
+        p, li {
+            color: #475569;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* 強調表現（フォントサイズ拡大 & ウェイト太め） */
+        .highlight {
+            color: #ff6b00;
+            font-weight: 800;
+            font-size: 26px; /* 強調フォントサイズをさらに拡大 */
+            display: inline;
+        }
+
+        .highlight-bold {
+            color: #ff3c00;
+            font-weight: 800;
+            font-size: 30px; /* 強調フォントサイズをさらに拡大 */
+            display: inline;
+            border-bottom: 2px solid #ff3c00;
+            padding-bottom: 2px;
+        }
+
+        /* ==========================================
+           3. 上下55分布局 & コンポーネント最適化
+           ========================================== */
+        .content-area-split {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            height: calc(100% - 70px);
+            justify-content: space-between; /* 上下配置の55分布局バランス維持 */
+        }
+
+        /* 上部55%：最も重要な要約メッセージカード */
+        .hero-message-card {
+            background-color: #fffaf7;
+            border: 2px solid #ffe8db;
+            border-left: 10px solid #ff6b00;
+            border-radius: 14px;
+            padding: 30px 35px;
+            width: 100%;
+            height: 48%; /* 上半分をしっかり占める */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.03);
+        }
+
+        .hero-message-card h3 {
+            color: #ff6b00;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-message-card p {
+            font-size: 24px; /* メッセージ比率を大きく強調 */
+            color: #1e293b;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        /* 下部45%：詳細・例・行動リストのコンテナ */
+        .lower-details-container {
+            height: 48%; /* 下半分をしっかり占める */
+            display: flex;
+            align-items: stretch;
+            padding: 15px 0 0 0; /* 余白を最適化 */
+        }
+
+        /* 2カラムレイアウト */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 35px;
+            width: 100%;
+        }
+
+        .two-column.tiled > div {
+            background-color: #fafbfc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px 30px; /* 充実したPaddingで読みやすさ抜群 */
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .two-column.tiled h3 {
+            color: #1e293b;
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid #ffe8db;
+            padding-bottom: 8px;
+        }
+
+        .two-column.tiled h3 i {
+            color: #ff6b00;
+        }
+
+        /* 3列タイルレイアウト（下部） */
+        .tiled-content {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .tile {
+            background-color: #fafbfc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .tile .icon-wrapper {
+            width: 44px;
+            height: 44px;
+            background-color: #fff0e6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+
+        .tile .icon-wrapper i {
+            color: #ff6b00;
+            font-size: 18px;
+        }
+
+        .tile h3 {
+            color: #1e293b;
+            font-size: 17px;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #ffe8db;
+            padding-bottom: 6px;
+            width: 100%;
+        }
+
+        /* 3分割（スライド4用の3カラムなど） */
+        .three-column-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .three-column-details > div {
+            background-color: #fafbfc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .three-column-details h3 {
+            color: #1e293b;
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            border-bottom: 2px solid #ffe8db;
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .three-column-details h3 i {
+            color: #ff6b00;
+        }
+
+        /* 2x2 グリッドレイアウト（現在の自分用） */
+        .grid-2x2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: auto auto;
+            gap: 20px;
+            width: 100%;
+        }
+
+        .grid-item {
+            background-color: #fafbfc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .grid-item h4 {
+            color: #ff6b00;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #ffe8db;
+            padding-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* シンプルで統一感のあるリスト表示 */
+        .clean-list {
+            list-style: none;
+        }
+
+        .clean-list li {
+            position: relative;
+            padding-left: 18px;
+            margin-bottom: 8px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .clean-list li::before {
+            content: '■';
+            position: absolute;
+            left: 0;
+            color: #ff6b00;
+            font-size: 10px;
+            top: 3px;
+        }
+
+        /* ==========================================
+           4. 特別仕様レイアウト（タイトル、目次、まとめ）
+           ========================================== */
+        .title-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+        }
+
+        .title-layout h1 {
+            color: #1e293b;
+            font-size: 56px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+        }
+
+        .title-layout .accent-bar {
+            width: 140px;
+            height: 6px;
+            background: linear-gradient(90deg, #ff6b00, #ff3c00);
+            border-radius: 3px;
+            margin-bottom: 45px;
+        }
+
+        .title-layout p.subtitle {
+            font-size: 24px;
+            color: #475569;
+            margin-bottom: 50px;
+            font-weight: 500;
+        }
+
+        .title-layout .author-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 18px;
+            color: #64748b;
+        }
+
+        .title-layout .author-info .org {
+            font-weight: 500;
+            color: #475569;
+        }
+
+        .title-layout .author-info .name {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 5px;
+            letter-spacing: 2px;
+        }
+
+        /* 目次用レイアウト */
+        .toc-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            width: 100%;
+            height: calc(100% - 70px);
+            align-items: center;
+            padding-top: 20px;
+        }
+
+        .toc-card {
+            background-color: #ffffff;
+            border: 2px solid #f1f5f9;
+            border-left: 8px solid #cbd5e1;
+            border-radius: 12px;
+            padding: 25px 30px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+
+        .toc-card:hover {
+            border-color: #ffe8db;
+            border-left-color: #ff6b00;
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.05);
+        }
+
+        .toc-num {
+            font-family: 'Poppins', sans-serif;
+            font-size: 28px;
+            font-weight: 800;
+            color: #ff6b00;
+            background-color: #fff0e6;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .toc-text {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .qa-layout {
+            text-align: center;
+            width: 100%;
+            margin: auto 0;
+        }
+
+        .qa-layout h2 {
+            font-size: 34px;
+            color: #1e293b;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .qa-layout h2 span {
+            color: #ff3c00;
+        }
+
+        .qa-layout p {
+            font-size: 22px;
+            color: #475569;
+            font-weight: 500;
+            margin-bottom: 30px;
+        }
+
+        /* ページ番号ナビゲーション（右下配置） */
+        .footer-nav {
+            position: absolute;
+            bottom: 30px;
+            right: 100px;
+            color: #94a3b8;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            z-index: 5;
+        }
+
+        .footer-nav .brand {
+            color: #ff6b00;
+            font-weight: 700;
+        }
+
+        /* ==========================================
+           5. ページめくり用のボタン配置 & 配色
+           ========================================== */
+        /* ご指定通りのボタンデザイン：
+           - 左右の画面端に配置 (Viewport内に絶対配置して自動伸縮に追従)
+           - 背景は白色、外枠と矢印はテキストと同色のオレンジ(#ff6b00) */
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ffffff;
+            border: 2px solid #ff6b00;
+            color: #ff6b00;
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(255, 107, 0, 0.1);
+        }
+
+        #prevBtn {
+            left: 20px;
+        }
+
+        #nextBtn {
+            right: 20px;
+        }
+
+        /* ホバー時の洗練されたアニメーション */
+        .nav-btn:hover {
+            background-color: #ff6b00;
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+            transform: translateY(-50%) scale(1.08);
+        }
+
+        .nav-btn:active {
+            transform: translateY(-50%) scale(0.95);
+        }
+
+        /* 非アクティブな場合のボタン非表示または無効化スタイル */
+        .nav-btn.disabled {
+            opacity: 0.15;
+            cursor: not-allowed;
+            pointer-events: none;
+            border-color: #cbd5e1;
+            color: #cbd5e1;
+            box-shadow: none;
+        }
+
+        /* 下部ドットナビゲーション領域 */
+        .controls-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 1280px;
+            margin-top: 25px;
+            padding: 0 20px;
+        }
+
+        .dots-container {
+            display: flex;
+            gap: 12px;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .dot.active {
+            background-color: #ff6b00;
+            transform: scale(1.2);
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.3);
+        }
+
+        /* キーボードガイド表示（米白背景に対応） */
+        .keyboard-guide {
+            position: relative;
+            margin-top: 15px;
+            color: #64748b;
+            font-size: 12px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .keyboard-guide span {
+            background: rgba(15, 23, 42, 0.05);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- プレゼンテーション・メインビューポート（16:9比率を保つコンテナ） -->
+    <div class="presentation-viewport" id="presentationViewport">
+
+        <!-- スライド左右にボタンを統合（自動伸縮に合わせて一体化） -->
+        <button class="nav-btn" id="prevBtn" title="前のスライドへ (Left Arrow / Backspace)">
+            <i class="fa-solid fa-chevron-left"></i>
+        </button>
+
+        <!-- Slide 1: Title Slide -->
+        <div class="slide-container active" id="slide1">
+            <div class="title-layout">
+                <h1>キャリアプラン</h1>
+                <div class="accent-bar"></div>
+                <p class="subtitle">ITとAIで企業の本質的な課題を解決するエンジニアへ</p>
+                <div class="author-info">
+                    <span class="org">東京医療秘書歯科衛生&amp;IT専門学校</span>
+                    <span class="org">Webデザイン・IT科</span>
+                    <span class="name">張 浩</span>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">01 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 2: Table of Contents (本日の流れ) -->
+        <div class="slide-container" id="slide2">
+            <h2 class="slide-title">本日の流れ</h2>
+            <div class="toc-grid">
+                <div class="toc-card" onclick="showSlide(2)">
+                    <div class="toc-num">01</div>
+                    <div class="toc-text">最も遠い将来のキャリア目標</div>
+                </div>
+                <div class="toc-card" onclick="showSlide(3)">
+                    <div class="toc-num">02</div>
+                    <div class="toc-text">入社3年後の姿</div>
+                </div>
+                <div class="toc-card" onclick="showSlide(4)">
+                    <div class="toc-num">03</div>
+                    <div class="toc-text">入社1年後の姿</div>
+                </div>
+                <div class="toc-card" onclick="showSlide(5)">
+                    <div class="toc-num">04</div>
+                    <div class="toc-text">現在の自分</div>
+                </div>
+                <div class="toc-card" onclick="showSlide(6)">
+                    <div class="toc-num">05</div>
+                    <div class="toc-text">改善思考の原点</div>
+                </div>
+                <div class="toc-card" onclick="showSlide(7)">
+                    <div class="toc-num">06</div>
+                    <div class="toc-text">まとめ</div>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">02 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 3: Long-Term Target (IT Doctor Concept) -->
+        <div class="slide-container" id="slide3">
+            <h2 class="slide-title">将来のキャリア目標：ITドクターのような存在</h2>
+            <div class="content-area-split">
+                <!-- 上部55%：最も重要な結論 -->
+                <div class="hero-message-card">
+                    <h3>企業の課題をITとAIで改善できるエンジニアへ</h3>
+                    <p>
+                        単に指示通りにコードを書くのではなく、現場の非効率を発見し、
+                        <span class="highlight-bold">「ITドクター」のように最適な処方（効率化・自動化）で改善できる存在</span>を目指します。
+                    </p>
+                </div>
+                
+                <!-- 下部45%：詳細例とやりたいこと -->
+                <div class="lower-details-container">
+                    <div class="two-column tiled">
+                        <div>
+                            <h3><i class="fa-solid fa-magnifying-glass"></i>実際に感じた課題</h3>
+                            <ul class="clean-list">
+                               <li>システムに十分なロジックがなく、人が手計算している</li>
+                               <li>同じ単純な入力作業を何度も繰り返している</li>
+                               <li>Webサイトが初めて使う人にとって分かりづらい</li>
+                               <li>動線が非効率で、現場で無駄な労力がかかっている</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-heart"></i>自分が大切にしたい姿勢と実現</h3>
+                            <ul class="clean-list">
+                                <li><span class="highlight">「もっと効率よく、人の負担を減らせないか」</span>の追求</li>
+                                <li>業務効率化・UI/UX改善・自動化による業務負荷軽減</li>
+                                <li>AI活用とヒューマンエラー削減による働きやすい環境づくり</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">03 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 4: 3 Years After -->
+        <div class="slide-container" id="slide4">
+            <h2 class="slide-title">入社3年後：幅広い知識で問題解決できるエンジニア</h2>
+            <div class="content-area-split">
+                <!-- 上部55%：最も重要な結論 -->
+                <div class="hero-message-card">
+                    <h3>技術を理解し、自ら本質的な改善提案ができる状態へ</h3>
+                    <p>
+                        「なぜ問題が起きるのか」「どこに無駄があるのか」を能動的に考え、
+                        <span class="highlight-bold">開発知識を強みに、自分で考えて解決策を提案できるエンジニア</span>になります。
+                    </p>
+                </div>
+
+                <!-- 下部45%：詳細 -->
+                <div class="lower-details-container">
+                    <div class="three-column-details">
+                        <div>
+                            <h3><i class="fa-solid fa-gears"></i>身につけたい技術</h3>
+                            <ul class="clean-list">
+                                <li><span class="highlight">フロント・バックエンド</span></li>
+                                <li><span class="highlight">データベース &amp; Linux</span></li>
+                                <li><span class="highlight">AI関連技術の活用</span></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-chart-line"></i>自ら改善提案ができる状態</h3>
+                            <ul class="clean-list">
+                                <li>なぜ問題が起きているのか？</li>
+                                <li>どこに無駄があるのか？</li>
+                                <li>どう改善すれば効率化できるか？</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-lightbulb"></i>さらに伸ばしたい能力</h3>
+                            <ul class="clean-list">
+                                <li>顧客の業務フローを解き明かす</li>
+                                <li>ボトルネックを見抜く問題分析力</li>
+                                <li>素早く活かす新技術への対応力</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">04 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 5: 1 Year After -->
+        <div class="slide-container" id="slide5">
+            <h2 class="slide-title">入社1年後：開発の基礎とシステム全体の理解</h2>
+            <div class="content-area-split">
+                <!-- 上部55%：最も重要な結論 -->
+                <div class="hero-message-card">
+                    <h3>チーム開発の基本修得と、全体を貫く論理的思考力の確立</h3>
+                    <p>
+                        開発の基本的な流れを確実に体得し、<span class="highlight-bold">Pythonを通じたプログラムロジック（論理的思考）の理解</span>に全力を注ぎます。
+                    </p>
+                </div>
+
+                <!-- 下部45%：詳細 -->
+                <div class="lower-details-container">
+                    <div class="three-column-details">
+                        <div>
+                            <h3><i class="fa-solid fa-users"></i>まず身につけたいこと</h3>
+                            <ul class="clean-list">
+                                <li>実務的な開発プロセスの流れ</li>
+                                <li>チーム開発における円滑な連携</li>
+                                <li>現場での密なコミュニケーション</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-brain"></i>Pythonでのロジック理解</h3>
+                            <ul class="clean-list">
+                                <li><span class="highlight">if / for / 関数 (def)</span></li>
+                                <li>これらを組み合わせて組み立てる</li>
+                                <li>システムを貫く「論理的な考え方」</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-circle-nodes"></i>今感じている課題</h3>
+                            <ul class="clean-list">
+                                <li>フロントとバックエンドの繋がり</li>
+                                <li>データベースとの確実なデータ連携</li>
+                                <li>システム全体のデータの流れの把握</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">05 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 6: Current State (現在の自分) -->
+        <div class="slide-container" id="slide6">
+            <h2 class="slide-title">現在の自分：主体的な試行錯誤と学習姿勢</h2>
+            <div class="content-area-split">
+                <!-- 上部55%：最も重要な結論 -->
+                <div class="hero-message-card">
+                    <h3>問題を放置せず、自分で考え、納得するまで調べ解決する</h3>
+                    <p>
+                        単にコードの書き方を暗記するのではなく、<span class="highlight-bold">「なぜこの挙動になるのか」を追求する学習姿勢</span>を徹底して身につけています。
+                    </p>
+                </div>
+
+                <!-- 下部45%：現在の取り組み、学び方、行動の3カラム構成 -->
+                <div class="lower-details-container">
+                    <div class="three-column-details">
+                        <div>
+                            <h3><i class="fa-solid fa-keyboard"></i> ① 現在の取り組み【行動】</h3>
+                            <ul class="clean-list">
+                                <li>Web制作・フロントエンドの自主学習</li>
+                                <li>JavaScriptを活用した個人制作の実践</li>
+                                <li>Python学習によるバックエンド領域へのアプローチ</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-lightbulb"></i> ② 学習で大切にしていること</h3>
+                            <ul class="clean-list">
+                                <li>「コードを丸暗記」して終わり、にしない</li>
+                                <li>なぜこの処理や動きになるのかを追求する</li>
+                                <li>どういう設計の流れで動いているかを理解する</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-gears"></i> ③ 壁にぶつかった際の姿勢</h3>
+                            <ul class="clean-list">
+                                <li>分からない部分を曖昧なまま放置しない</li>
+                                <li>自分で調べ、試行錯誤を徹底的に継続する</li>
+                                <li>納得して理解できるまで検証し抜く力</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">06 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 7: Core Drive of Improvement (改善思考の原点) -->
+        <div class="slide-container" id="slide7">
+            <h2 class="slide-title">改善思考の原点 〜「もっと良くできないか」を考える習慣〜</h2>
+            <div class="content-area-split">
+                <!-- 上部55%：最も重要な結論（人格的な原動力の表明） -->
+                <div class="hero-message-card">
+                    <h3>「混乱、低効率、不合理」に対する強い課題感と、人の負担を減らしたい思い</h3>
+                    <p>
+                        私は昔から日常やアルバイト先で、
+                        <span class="highlight-bold">非効率な動線や不合理なシステムに気づき、主体的に改善を考えてしまう強い気質</span>を持っています。
+                    </p>
+                </div>
+
+                <!-- 下部45%：原動力の要素と、ITドクター目標との接続 -->
+                <div class="lower-details-container">
+                    <div class="two-column tiled">
+                        <div>
+                            <h3><i class="fa-solid fa-briefcase"></i> 日常・アルバイトにみる改善意識</h3>
+                            <ul class="clean-list">
+                                <li>非効率な作業や動線を見ると、自然と気になってしまう</li>
+                                <li>アルバイト先でも「どうすれば動線が良くなるか」を模索する</li>
+                                <li>「もっと簡単にできないか」「もっと手間を省けないか」の習慣化</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3><i class="fa-solid fa-route"></i> ITドクターという目標への接続</h3>
+                            <ul class="clean-list">
+                                <li>システムが不十分で、人が手作業で補っている状態を無くしたい</li>
+                                <li>「人の負担を減らしたい」という思いが根本のやりがい</li>
+                                <li>日常の「気づき」と「改善欲」が、まさにITドクターのコンセプトと強く合致</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">07 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 8: Summary -->
+        <div class="slide-container" id="slide8">
+            <div class="content-area" style="justify-content: center; height: 100%; width: 100%;">
+                <div class="qa-layout">
+                    <h2>
+                        <span>主体的に学び続けながら、</span><br>
+                        企業の課題をITで解決できるエンジニアを目指します。
+                    </h2>
+                    <div class="accent-bar" style="width: 200px; height: 4px; background: linear-gradient(90deg, #ff6b00, #ff3c00); margin: 20px auto;"></div>
+                    
+                    <!-- 強く共感するメッセージ（ITドクターへの共感） -->
+                    <div class="hero-message-card" style="height: auto; max-width: 950px; margin: 0 auto 30px; padding: 25px; text-align: left;">
+                        <p style="font-size: 19px; line-height: 1.6; font-weight: 700; color: #1e293b;">
+                            貴社の<span class="highlight-bold" style="font-size: 21px;">「ITドクター」という考え方に強く共感</span>しており、<br>単に技術を学ぶだけではなく、企業や現場の課題を本質から改善できるエンジニアとして成長していきたいと考えています。
+                        </p>
+                    </div>
+
+                    <div class="tiled-content" style="max-width: 950px; margin: 0 auto 30px;">
+                        <div class="tile" style="padding: 15px; background-color: #fff9f5; border-color: #ffe8db;">
+                            <p style="font-size: 15px; font-weight: 700; color: #ff3c00; width: 100%; text-align: center;">① 課題解決型の思考</p>
+                        </div>
+                        <div class="tile" style="padding: 15px; background-color: #fff9f5; border-color: #ffe8db;">
+                            <p style="font-size: 15px; font-weight: 700; color: #ff3c00; width: 100%; text-align: center;">② 現場に寄り添う改善姿勢</p>
+                        </div>
+                        <div class="tile" style="padding: 15px; background-color: #fff9f5; border-color: #ffe8db;">
+                            <p style="font-size: 15px; font-weight: 700; color: #ff3c00; width: 100%; text-align: center;">③ 使う人を想うシステム設計</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">08 / 09</span>
+            </div>
+        </div>
+
+        <!-- Slide 9: Final Slide (Thank You) -->
+        <div class="slide-container" id="slide9">
+            <div class="title-layout" style="height: 100%; width: 100%;">
+                <h1 style="font-size: 52px; font-weight: 800; letter-spacing: -1px; margin-bottom: 25px; color: #1e293b;">
+                    ご清聴ありがとうございました。
+                </h1>
+                <div class="accent-bar" style="width: 250px; height: 6px; background: linear-gradient(90deg, #ff6b00, #ff3c00); border-radius: 3px; margin-bottom: 40px;"></div>
+                <p class="subtitle" style="font-size: 22px; color: #475569; margin-bottom: 0;">東京医療秘書歯科衛生&amp;IT専門学校 | 張 浩</p>
+            </div>
+            <div class="footer-nav">
+                <span class="brand">CAREER PLAN</span> | <span class="slide-num">09 / 09</span>
+            </div>
+        </div>
+
+        <button class="nav-btn" id="nextBtn" title="次のスライドへ (Right Arrow / Space / Enter)">
+            <i class="fa-solid fa-chevron-right"></i>
+        </button>
+
+    </div>
+
+    <!-- 下部スライダ制御パネル（ドットのみ集約） -->
+    <div class="controls-container">
+        <div class="dots-container" id="dotsContainer"></div>
+    </div>
+
+    <div class="keyboard-guide">
+        <span>◀ / Backspace: 戻る</span>
+        <span>▶ / Space / Enter: 進む</span>
+    </div>
+
+    <script>
+        // スライド切り替え制御用の変数初期化
+        let currentSlideIndex = 0;
+        const slides = document.querySelectorAll('.slide-container');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dotsContainer = document.getElementById('dotsContainer');
+        const viewport = document.getElementById('presentationViewport');
+
+        // ドットの生成
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (index === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => showSlide(index));
+            dotsContainer.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        // スライド指定表示関数
+        function showSlide(index) {
+            if (index < 0 || index >= slides.length) return;
+            
+            // 現在の非表示、ターゲットの表示
+            slides[currentSlideIndex].classList.remove('active');
+            dots[currentSlideIndex].classList.remove('active');
+            
+            currentSlideIndex = index;
+            
+            slides[currentSlideIndex].classList.add('active');
+            dots[currentSlideIndex].classList.add('active');
+
+            // ボタンコントロールの更新
+            if (currentSlideIndex === 0) {
+                prevBtn.classList.add('disabled');
+            } else {
+                prevBtn.classList.remove('disabled');
+            }
+
+            if (currentSlideIndex === slides.length - 1) {
+                nextBtn.classList.add('disabled');
+            } else {
+                nextBtn.classList.remove('disabled');
+            }
+        }
+
+        // 次へ進む、前へ戻る関数
+        function nextSlide() {
+            if (currentSlideIndex < slides.length - 1) {
+                showSlide(currentSlideIndex + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideIndex > 0) {
+                showSlide(currentSlideIndex - 1);
+            }
+        }
+
+        // イベントリスナーの追加
+        nextBtn.addEventListener('click', nextSlide);
+        prevBtn.addEventListener('click', prevSlide);
+
+        // キーボード操作対応
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
+
+        // モバイルタッチスワイプ操作対応
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        viewport.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        viewport.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            if (touchStartX - touchEndX > swipeThreshold) {
+                nextSlide(); // 左にスワイプ（次へ）
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                prevSlide(); // 右にスワイプ（戻る）
+            }
+        }
+
+        // ビューポートサイズ自動適応処理
+        function adjustScale() {
+            const viewportWidth = 1280;
+            const viewportHeight = 720;
+            const windowWidth = window.innerWidth;
+            const windowHeight = window.innerHeight;
+
+            // 余白を考慮した縮小倍率の計算
+            const padding = 40;
+            const scaleX = (windowWidth - padding) / viewportWidth;
+            const scaleY = (windowHeight - padding - 120) / viewportHeight; // コントロール分
+            const finalScale = Math.min(scaleX, scaleY, 1); // 最大スケールは1（等倍）
+
+            viewport.style.transform = `scale(${finalScale})`;
+        }
+
+        window.addEventListener('resize', adjustScale);
+        
+        // 読込時の初期化
+        window.onload = function() {
+            showSlide(0);
+            adjustScale();
+        }
+    </script>
+</body>
+</html>
